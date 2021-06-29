@@ -70,6 +70,33 @@ These output a boolean (TRUE or FALSE) telling you if the variable is that class
 
 
 
+### Reading in data
+
+Reading in and working with data is an essential skill in R. Here, we will go over how to read in the data that you will use to make a predictive forecast.
+
+```{r}
+
+dat <- read.csv('data.csv')
+
+```
+
+
+
+
+
+Now we can start to look at properties of the data 
+
+```{r}
+
+head(dat)
+
+
+```
+
+
+((further description of the data)) 
+
+
 
 
 
@@ -153,6 +180,31 @@ abline(m1, lwd=2)
 lines(smooth.spline(y=y,x=x), col='red', lwd=2)
 
 ```
+
+
+
+
+
+And if we accept that we need a model, what's stopping us from making the model incredibly complex to capture all the possible variation in the data?
+
+```{r}
+
+par(mar=c(4,4,0.5,0.5))
+plot(y=y,x=x, pch=16, 
+	ylab='y', xlab='x', 
+	col=adjustcolor(1,0.5), las=1)
+abline(m1, lwd=2)
+
+m3 <- lm(y~poly(x,3))
+lines(x=sort(x), fitted(m3)[order(x)], col='green', type='l', lwd=2) 
+
+m4 <- lm(y~poly(x,15))
+lines(x=sort(x), fitted(m4)[order(x)], col='purple', type='l', lwd=2) 
+
+```
+
+
+The model would quickly become uninformative. That is, the model could fit every data point perfectly, but tell us nothing about the general relationship between the two variables. This makes it impossible to use the model to predict. Adding in this level of complexity essentially minimizes the error to the fit, but in turn basically maximizes error when extrapolating to new data. This model would be overfit, and the process of adding in variables that minimize model fit error while making the model useless to other datasets, is called overfitting. Not ideal. 
 
 
 

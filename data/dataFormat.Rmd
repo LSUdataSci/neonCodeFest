@@ -24,10 +24,21 @@ output:
 
 
 
+`data.frame` with the following columns and date ranges:
+
++ year (2014-2019 for training data, 2020 for test data)
++ season (3 month spans 1-3, 4-6, 7-9, 10-12 month)
++ latitude and longitude
++ species richness (per site)
++ abundance (mean plot estimate per site, standardized by trapping effort)
+
+maybe?
++ plant diversity at the site per season/year
++ annual-level variation that can capture spatial differences (e.g., mean annual temperature and mean annual precipitation, temperature seasonality, etc. for each year if available). 
++ 
 
 
 
-Species richness and overall abundance per season for 2014-2019. 
 
 
 ```{r}

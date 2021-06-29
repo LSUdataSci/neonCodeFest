@@ -123,7 +123,12 @@ data_by_site_year_season <- data_by_site_year_season_taxon %>%
 Read in NEON site information from the NEON website and merge with the small mammal table, and save in the `data/` subdirectory in this repo.
 ```{r}
 # get site info data
-site_info <- read_csv(file = "https://www.neonscience.org/sites/default/files/NEON_Field_Site_Metadata_20210226_0.csv") %>%
+site_info <- read_csv(file = "https://www.neonscience.org/sites/default/files/NEON_Field_Site_Metadata_20210226_0.csv")
+ 
+# rename columns
+names(site_info) <- names(site_info) %>% gsub("field_","",.)
+
+site_info <- site_info %>%
   dplyr::select(
     domain_id, site_id, site_name,
     site_type, 
@@ -134,11 +139,7 @@ site_info <- read_csv(file = "https://www.neonscience.org/sites/default/files/NE
     mean_canopy_height_m, dominant_nlcd_classes, domint_plant_species,
     usgs_geology_unit, megapit_soil_family, soil_subgroup,
     avg_number_of_green_days, avg_green_max_doy)
-  
-
-# rename columns
-names(site_info) <- names(site_info) %>% gsub("field_","",.)
-
+ 
 # combine site info data with small mammal data
 data_merged <- data_by_site_year_season %>% 
   left_join(

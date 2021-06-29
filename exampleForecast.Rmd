@@ -1,0 +1,179 @@
+---
+title: "Baseline forecast and introduction to R"
+author: "Tad Dallas"
+includes:
+  in_header:
+    - \usepackage{lmodern}
+output:
+  pdf_document:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 6
+    toc: yes
+  html_document:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 6
+    highlight: tango
+    theme: journal
+---
+
+
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+## What is R and why should I use it?
+
+R is a statistical programming language that has quickly become the standard language for ecologists, and to some extent, biologists. This does not mean that you have to use it. I hope that many of the skills you learn in this course in terms of how to program are transferable across languages. 
+
+
+
+## R basics
+
+### Variables 
+
+Variables are defined as objects in `R` that can take on different attributes. For instance, data you work with could come in the form of `numeric` variables, such as heights, weights, etc. `R` has many different variable types, all of which are defined by their class. A variable `class` defines the attributes of an object, and are generally grouped into 3 different types (S3, S4, and RC). Most of the data you will work with will be S3 or S4, but RC class is the most aligned with `object-oriented programming`. We will focus on base types in this class. Specifically, we will work with four general types of variables: `numeric`, `character`, `factor`, and `logical`. We will use this generic types to build up to "higher order" class structures. For instance, you can define vectors of different lengths which correspond to the 4 different types.
+
+```{r}
+num <- c(1,2,3,4)
+char <- LETTERS[1:4]
+fact <- as.factor(c('a', 'a', 'b', 'd'))
+logc <- c(TRUE, FALSE, TRUE, TRUE)
+
+```
+
+We can examine the properties of these vectors by using base `R` functions
+
+```{r}
+
+is.numeric(num)
+is.factor(num)
+
+is.factor(fact)
+is.logical(fact)
+
+```
+
+These output a boolean (TRUE or FALSE) telling you if the variable is that class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## What are models?
+
+Models are representations of a system of interest, used for the purposes of inference or prediction. To say 'model' in ecology is a bit too broad to be useful, and the odd delineation between "modelers" and field researchers is a bit ridiculous. To start, we can delineate between statistical models and theoretical or phenomenological models. Statistical models (e.g., ANOVA, generalized linear models) are what we will cover here, and attempt to gain inference or prediction about some response $y$ given some number of inputs $x_1...x_n$. Phenomenological models are those that are constructed independent of theory but are an attempt to construct a system which can explain some ecological process, often in a dynamic way (think of the SIR model in epidemiology). Theoretical models are those that directly arise from first principles independent of empirical data. The main distinction here is between statistical models and "other" models, as both are neat, but we'll focus on simple statistical models here.
+
+
+> When you create a model of a system, you have two things you don't understand; the system and the model.
+
+
+
+
+
+
+
+## What are the basic components of a model? 
+
+The response variable should be the thing that you want to predict, or the thing whose variability you want to understand (also sometimes referred to as the dependent variable). Often, it is something that you think is the effect produced by some other cause. For example, in examining the relationship between gas usage and outdoor temperature, it seems clear that gas usage should be the response: temperature is a major determinant of gas usage. But suppose that the modeler wanted to be able to measure outdoor temperature from the amount of gas used. Then it would make sense to take temperature as the response variable.
+
+
+The explanatory variables are used to explain or predict the response variable (also sometimes referred to as independent variables).
+
+
+
+
+
+
+
+### A simple example
+
+```{r}
+
+y <- runif(100)
+x <- y ** runif(100, 1,4)
+
+m1 <- lm(y~x)
+
+
+plot(y=y,x=x, pch=16, 
+	ylab='y', xlab='x', 
+	col='dodgerblue', las=1)
+abline(m1, lwd=2)
+
+```
+
+
+
+
+
+
+
+
+But to minimize these residuals (or the sum of squares of the residuals), we don't necessarily _need_ a model, right? 
+
+
+
+```{r}
+
+par(mar=c(4,4,0.5,0.5))
+plot(y=y,x=x, pch=16, 
+	ylab='y', xlab='x', 
+	col=adjustcolor(1,0.5), las=1)
+abline(m1, lwd=2)
+
+lines(smooth.spline(y=y,x=x), col='red', lwd=2)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

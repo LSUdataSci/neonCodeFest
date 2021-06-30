@@ -1,6 +1,6 @@
 ---
 title: "NEON data formatting"
-author: "Tad Dallas"
+author: "Tad Dallas and Eric Sokol"
 includes:
   in_header:
     - \usepackage{lmodern}
@@ -37,8 +37,12 @@ maybe?
 + annual-level variation that can capture spatial differences (e.g., mean annual temperature and mean annual precipitation, temperature seasonality, etc. for each year if available). 
 + 
 
+Set working directory to neonCodeFest root dir so relative filepaths work
+```{r cache=TRUE}
+my_wd <- "~/GitHub/neonCodeFest" #edit this based on what your path to the cloned repo
+setwd(my_wd)
 
-
+```
 
 Load packages. Install `ecocomDP` from CRAN if necessary
 ```{r}
@@ -69,8 +73,11 @@ my_id <- "neon.ecocomdp.10072.001.001"
 my_ecocomDP_data <- ecocomDP::read_data(
   id = my_id,
   site = c("CPER","OSBS"), #comment out this line to download all sites
-  token = Sys.getenv("NEON_TOKEN"),
+  # token = Sys.getenv("NEON_TOKEN"), #uncomment to use NEON_TOKEN if you have it set up
   check.size = FALSE)
+
+# make sure wd is correct
+setwd(my_wd)
 
 # save data initial download locally (RDS file is only 39.7KB)
 saveRDS(my_ecocomDP_data, "data/my_ecocomDP_data.RDS")
@@ -79,6 +86,9 @@ saveRDS(my_ecocomDP_data, "data/my_ecocomDP_data.RDS")
 
 Read the locally save data, flatten, and calculate species richness and abundance standardized to 100 trapnights by season by year by site.
 ```{r}
+# make sure wd is correct
+setwd(my_wd)
+
 # read in data from local file
 my_ecocomDP_data <- readRDS("data/my_ecocomDP_data.RDS")
 
@@ -144,6 +154,9 @@ site_info <- site_info %>%
 data_merged <- data_by_site_year_season %>% 
   left_join(
     site_info,by = c("siteID" = "site_id"))
+
+# make sure wd is correct
+setwd(my_wd)
 
 # write to the data subdir
 write_csv(data_merged, "data/data.csv")

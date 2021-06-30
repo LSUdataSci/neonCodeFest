@@ -22,16 +22,6 @@ output:
 
 
 
-```{r}
-
-
-
-
-```
-
-
-
-
 
 
 ## What is R and why should I use it?
@@ -70,6 +60,29 @@ These output a boolean (TRUE or FALSE) telling you if the variable is that class
 
 
 
+
+### Data.frames and subsetting data
+
+The data above (e.g., `num`) were stored as 'vectors', which are simple one-dimensional data structures. Most of the time, we have more than dimension of data. We could imagine wanting the data organized to where each row of the data corresponds to a particular observation, with multiple columns of data describing the observation. For instance, if we considered each row as a state in the USA, columns might correspond to latitude, longitude, land area, state bird, etc. To store this information, we would need a two-dimensional data structure called a `data.frame`.
+
+```{r}
+
+df <- data.frame(state=c('AL', 'GA', 'LA'), 
+  latitude=c(32.318, 32.165,30.984),
+  longitude=c(86.9023,82.9001,91.962),
+  stateBird=c("Northern Flicker", "Brown Thatcher", "Brown pelican"))
+
+head(df)
+
+```
+
+
+
+
+
+
+
+
 ### Reading in data
 
 Reading in and working with data is an essential skill in R. Here, we will go over how to read in the data that you will use to make a predictive forecast.
@@ -79,6 +92,14 @@ Reading in and working with data is an essential skill in R. Here, we will go ov
 dat <- read.csv('data.csv')
 
 ```
+
+
+
+
+
+
+
+
 
 
 
@@ -94,7 +115,48 @@ head(dat)
 ```
 
 
+
+
+
+
+
+
+
+
+
 ((further description of the data)) 
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+((some pretty plots))
+
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
 
 
 
@@ -117,10 +179,19 @@ head(dat)
 
 ## What are models?
 
-Models are representations of a system of interest, used for the purposes of inference or prediction. To say 'model' in ecology is a bit too broad to be useful, and the odd delineation between "modelers" and field researchers is a bit ridiculous. To start, we can delineate between statistical models and theoretical or phenomenological models. Statistical models (e.g., ANOVA, generalized linear models) are what we will cover here, and attempt to gain inference or prediction about some response $y$ given some number of inputs $x_1...x_n$. Phenomenological models are those that are constructed independent of theory but are an attempt to construct a system which can explain some ecological process, often in a dynamic way (think of the SIR model in epidemiology). Theoretical models are those that directly arise from first principles independent of empirical data. The main distinction here is between statistical models and "other" models, as both are neat, but we'll focus on simple statistical models here.
+Models are representations of a system of interest, used for the purposes of inference or prediction. 
 
 
 > When you create a model of a system, you have two things you don't understand; the system and the model.
+
+
+But it's still super fun. So let's start developing our first predictive models!
+
+
+
+
+
+
 
 
 
@@ -134,9 +205,6 @@ The response variable should be the thing that you want to predict, or the thing
 
 
 The explanatory variables are used to explain or predict the response variable (also sometimes referred to as independent variables).
-
-
-
 
 
 
@@ -187,6 +255,7 @@ lines(smooth.spline(y=y,x=x), col='red', lwd=2)
 
 And if we accept that we need a model, what's stopping us from making the model incredibly complex to capture all the possible variation in the data?
 
+
 ```{r}
 
 par(mar=c(4,4,0.5,0.5))
@@ -212,6 +281,38 @@ The model would quickly become uninformative. That is, the model could fit every
 
 
 
+### Building a baseline model for this challenge
+
+Let's think about the system. Perhaps we can assume that species richness does not change dramatically over the years, but does change seasonally, such that species richness in 2020 could simply be the average species richness for a given season from 2014-2019. That is, species richness in fall of 2020 could be the average richness we observed from the years 2014-2019. 
+
+
+
+```{r}
+
+head(dat)
+
+mnRichness <- dat %>% 
+  group_by(site, season) %>%
+  summarise(mnRichness=mean(richness) 
+
+```
+
+
+
+
+
+Now that we have our predictions, we just need to ensure that the format matches that in the `predictionTemplate.csv` file available within this GitHub repository. 
+
+
+
+
+
+
+
+## What do you think influences species richness across the US?
+
+
+Best of luck in your forecast adventures! 
 
 
 

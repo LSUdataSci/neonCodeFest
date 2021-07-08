@@ -1,69 +1,12 @@
----
-title: "NEON data formatting"
-author: "Tad Dallas and Eric Sokol"
-includes:
-  in_header:
-    - \usepackage{lmodern}
-output:
-  pdf_document:
-    fig_caption: yes
-    fig_height: 6
-    fig_width: 6
-    toc: yes
-  html_document:
-    fig_caption: yes
-    fig_height: 6
-    fig_width: 6
-    highlight: tango
-    theme: journal
----
+# install.packages("ecocomDP")
 
-
-
-
-
-
-
-`data.frame` with the following columns and date ranges:
-
-+ year (2014-2019 for training data, 2020 for test data)
-+ season (3 month spans 1-3, 4-6, 7-9, 10-12 month)
-+ latitude and longitude
-+ species richness (per site)
-+ abundance (mean plot estimate per site, standardized by trapping effort)
-
-maybe?
-+ plant diversity at the site per season/year
-+ annual-level variation that can capture spatial differences (e.g., mean annual temperature and mean annual precipitation, temperature seasonality, etc. for each year if available). 
-+ 
-
-Set working directory to neonCodeFest root dir so relative filepaths work
-```{r cache=TRUE}
-my_wd <- "~/GitHub/neonCodeFest" #edit this based on what your path to the cloned repo
-setwd(my_wd)
-
-```
-
-Load packages. Install `ecocomDP` from CRAN if necessary
-```{r}
-# Load packages
-# install.packages('ecocomdp')
 library(ecocomDP)
 library(tidyverse)
 
-```
-
-
-
-Use ecocomDP functions to find the mammal data set
-```{r}
 # how to find the mammal data in ecocomDP
 data_list <- ecocomDP::search_data("mammal")
 View(data_list)
-```
 
-After identifying the data package id for hte NEON small mammal data set, read it in to your R environment, and save an archive of the data as downloaded.
-```{r}
 # the id for the neon small mammal data mapped to ecocomDP
 my_id <- "neon.ecocomdp.10072.001.001"
 
@@ -73,21 +16,11 @@ my_id <- "neon.ecocomdp.10072.001.001"
 my_ecocomDP_data <- ecocomDP::read_data(
   id = my_id,
   site = c("CPER","OSBS"), #comment out this line to download all sites
-  # token = Sys.getenv("NEON_TOKEN"), #uncomment to use NEON_TOKEN if you have it set up
+  token = Sys.getenv("NEON_TOKEN"),
   check.size = FALSE)
-
-# make sure wd is correct
-setwd(my_wd)
 
 # save data initial download locally (RDS file is only 39.7KB)
 saveRDS(my_ecocomDP_data, "data/my_ecocomDP_data.RDS")
-```
-
-
-Read the locally save data, flatten, and calculate species richness and abundance standardized to 100 trapnights by season by year by site.
-```{r}
-# make sure wd is correct
-setwd(my_wd)
 
 # read in data from local file
 my_ecocomDP_data <- readRDS("data/my_ecocomDP_data.RDS")
@@ -127,18 +60,9 @@ data_by_site_year_season <- data_by_site_year_season_taxon %>%
   summarize(
     total_count_per_100_trapnight = sum(count_per_100_trapnight),
     richness = length(unique(taxon_id)))
-```
 
-
-Read in NEON site information from the NEON website and merge with the small mammal table, and save in the `data/` subdirectory in this repo.
-```{r}
 # get site info data
-site_info <- read_csv(file = "https://www.neonscience.org/sites/default/files/NEON_Field_Site_Metadata_20210226_0.csv")
- 
-# rename columns
-names(site_info) <- names(site_info) %>% gsub("field_","",.)
-
-site_info <- site_info %>%
+site_info <- read_csv(file = "https://www.neonscience.org/sites/default/files/NEON_Field_Site_Metadata_20210226_0.csv") %>%
   dplyr::select(
     domain_id, site_id, site_name,
     site_type, 
@@ -149,47 +73,16 @@ site_info <- site_info %>%
     mean_canopy_height_m, dominant_nlcd_classes, domint_plant_species,
     usgs_geology_unit, megapit_soil_family, soil_subgroup,
     avg_number_of_green_days, avg_green_max_doy)
- 
+  
+
+# rename columns
+names(site_info) <- names(site_info) %>% gsub("field_","",.)
+
 # combine site info data with small mammal data
 data_merged <- data_by_site_year_season %>% 
   left_join(
     site_info,by = c("siteID" = "site_id"))
 
-# make sure wd is correct
-setwd(my_wd)
-
 # write to the data subdir
 write_csv(data_merged, "data/data.csv")
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

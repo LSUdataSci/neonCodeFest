@@ -89,7 +89,7 @@ Reading in and working with data is an essential skill in R. Here, we will go ov
 
 ```{r}
 
-dat <- read.csv('data.csv')
+dat <- read.csv('data/neonData.csv')
 
 ```
 
@@ -110,7 +110,6 @@ Now we can start to look at properties of the data
 ```{r}
 
 head(dat)
-
 
 ```
 
@@ -182,8 +181,7 @@ head(dat)
 Models are representations of a system of interest, used for the purposes of inference or prediction. 
 
 
-> When you create a model of a system, you have two things you don't understand; the system and the model.
-
+> When you create a model of a system, you have two things you don't understand; the system and the model. -- Alan Hastings
 
 But it's still super fun. So let's start developing our first predictive models!
 
@@ -216,7 +214,7 @@ The explanatory variables are used to explain or predict the response variable (
 y <- runif(100)
 x <- y ** runif(100, 1,4)
 
-m1 <- lm(y~x)
+m1 <- lm(y ~ x)
 
 
 plot(y=y,x=x, pch=16, 
@@ -281,6 +279,11 @@ The model would quickly become uninformative. That is, the model could fit every
 
 
 
+
+
+
+
+
 ### Building a baseline model for this challenge
 
 Let's think about the system. Perhaps we can assume that species richness does not change dramatically over the years, but does change seasonally, such that species richness in 2020 could simply be the average species richness for a given season from 2014-2019. That is, species richness in fall of 2020 could be the average richness we observed from the years 2014-2019. 
@@ -292,8 +295,24 @@ Let's think about the system. Perhaps we can assume that species richness does n
 head(dat)
 
 mnRichness <- dat %>% 
-  group_by(site, season) %>%
-  summarise(mnRichness=mean(richness) 
+  group_by(siteID, season) %>%
+  summarise(mnRichness=mean(richness))
+
+```
+
+
+Now that we have our predictions, we just need to ensure that the format matches that in the `predictionTemplate.csv` file available within this GitHub repository. 
+
+
+```{r}
+
+preds <- read.csv('predictionTemplate.csv')
+
+preds2 <- dplyr::left_join(preds, mnRichness)
+preds2$richness <- NULL
+colnames(preds2)[4] <- 'richness'
+
+write.csv(preds2, 'myPredictions.csv')
 
 ```
 
@@ -301,7 +320,8 @@ mnRichness <- dat %>%
 
 
 
-Now that we have our predictions, we just need to ensure that the format matches that in the `predictionTemplate.csv` file available within this GitHub repository. 
+
+
 
 
 
